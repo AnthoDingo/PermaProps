@@ -305,6 +305,8 @@ end
 hook.Add("InitPostEntity", "InitializePermaProps", ReloadPermaProps)
 timer.Simple(5, function() ReloadPermaProps() end) -- When the hook isn't call ...
 
+hook.Add("PostCleanupMap", "PostCleanUpMapPermaProp", ReloadPermaProps)
+
 function TOOL:LeftClick(trace)
 
 	if CLIENT then return end
