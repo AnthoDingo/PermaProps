@@ -14,6 +14,8 @@
 		By Malboro the 28/12/2012
 		By Janus   the 12/07/2015 <- adding mysql support, to install mysql http://facepunch.com/showthread.php?t=1220537
 
+	Last Update 14/07/2015 <- Add migration command, server side only
+
 */
 
 Perma = Perma or {} -- Init table
@@ -648,4 +650,38 @@ hook.Add( "CanProperty", "PermaPropsProperty", function( ply, property, ent ) --
 
 	end
 
+end)
+
+--------------------------------------------------------------------------------
+
+--[[ Command only on server for security reason ]]--
+
+concommand.Add("pps_sqlite_to_mysql", function(NULL, cmd, args)
+
+	if CLIENT then return end
+	
+	Perma.DoQuery("DELETE FROM permaprops;")
+	local content = sql.Query( "SELECT * FROM permaprops;" )
+	if content == nil then return end
+	
+	for k, v in pairs( content ) do
+		Perma.DoQuery("INSERT INTO permaprops (id, map, content) VALUES(".. v.id ..", '".. Perma.MySQL:escape(v.map) .."', '".. Perma.MySQL:escape(v.content) .."');")
+	end
+	
+	MsgN("[PermaProps] the data was migrated from SQLite to MySQL successfully")
+end)
+
+concommand.Add("pps_mysql_to_sqlite", function(NULL, cmd, args)
+
+	if CLIENT then return end
+	
+	sql.Query("DELETE FROM permaprops;")
+	Perma.DoQuery("SELECT * FROM permaprops;", function( data )
+		if data == nil then return end
+		for k, v in pairs(data) do
+			sql.Query("INSERT INTO permaprops (id, map, content) VALUES(".. v['id'] ..", ".. sql.SQLStr(v['map']) ..", ".. sql.SQLStr(v['content']) ..");")
+		end
+	end)
+	
+	MsgN("[PermaProps] the data was migrated from MySQL to SQLite successfully")
 end)
