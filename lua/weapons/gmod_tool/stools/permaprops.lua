@@ -20,7 +20,7 @@
 
 Perma = Perma or {} -- Init table
 
-TOOL.Category		=	"SaveProps"
+TOOL.Category		=	"Props Tool"
 TOOL.Name			=	"PermaProps"
 TOOL.Command		=	nil
 TOOL.ConfigName		=	""
@@ -146,7 +146,7 @@ local function PPGetEntTable( ent )
 	content.Angle = ent:GetAngles()
 	content.Model = ent:GetModel()
 	content.Skin = ent:GetSkin()
-	content.Mins, content.Maxs = ent:GetCollisionBounds()
+	--content.Mins, content.Maxs = ent:GetCollisionBounds()
 	content.ColGroup = ent:GetCollisionGroup()
 	content.Name = ent:GetName()
 	content.ModelScale = ent:GetModelScale()
@@ -188,7 +188,7 @@ local function PPEntityFromTable( data, id )
 	ent:SetAngles( data.Angle or Angle(0, 0, 0) )
 	ent:SetModel( data.Model or "models/error.mdl" )
 	ent:SetSkin( data.Skin or 0 )
-	ent:SetCollisionBounds( ( data.Mins or 0 ), ( data.Maxs or 0 ) )
+	--ent:SetCollisionBounds( ( data.Mins or 0 ), ( data.Maxs or 0 ) )
 	ent:SetCollisionGroup( data.ColGroup or 0 )
 	ent:SetName( data.Name or "" )
 	ent:SetModelScale( data.ModelScale or 1 )
@@ -359,8 +359,6 @@ function TOOL:LeftClick(trace)
 
 	if CLIENT then return end
 
-	if not trace.Entity:IsValid() or not self:GetOwner():IsAdmin() then return end
-
 	local ent = trace.Entity
 	local ply = self:GetOwner()
 
@@ -399,8 +397,6 @@ end
 function TOOL:RightClick(trace)
 
 	if CLIENT then return end
-
-	if (not trace.Entity:IsValid()) then return end
 
 	local ent = trace.Entity
 	local ply = self:GetOwner()
