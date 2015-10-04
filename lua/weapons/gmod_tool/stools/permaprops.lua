@@ -20,7 +20,7 @@
 
 Perma = Perma or {} -- Init table
 
-TOOL.Category		=	"SaveProps"
+TOOL.Category		=	"Props Tool"
 TOOL.Name			=	"PermaProps"
 TOOL.Command		=	nil
 TOOL.ConfigName		=	""
@@ -31,32 +31,7 @@ if CLIENT then
 	language.Add("Tool.permaprops.0", "LeftClick: Add RightClick: Remove Reload: Update")
 end
 
-if SERVER then
-	require('mysqloo')
 
-	local HOST = "localhost"
-	local USER = "user"
-	local PASS = ""
-	local DATABASE = ""
-	local PORT = 3306
-	
-	if !mysqloo then MsgN("[PermaProps] -> Failed to load mysqloo module.\n\tPlease recheck your version to make sure it's installed correctly.\n\tAlso check to see if you have the right version.") return end
-	
-	Perma.MySQL = mysqloo.connect(HOST, USER, PASS, DATABASE, PORT)
-	Perma.MySQL.onConnected = function()
-		Perma.MySQLConnected = true
-		
-		MsgN("[PermaProps] Successfully to connect to database.")
-		init()
-	end
-	Perma.MySQL.onConnectionFailed = function(db, err)
-		Perma.MySQLConnected = false
-		MsgN("[PermaProps] Failed to connect to database -> " .. err)
-	end
-	Perma.MySQL:connect()
-	
-	
-end
 
 function init()
 	
@@ -171,7 +146,7 @@ local function PPGetEntTable( ent )
 	content.Angle = ent:GetAngles()
 	content.Model = ent:GetModel()
 	content.Skin = ent:GetSkin()
-	content.Mins, content.Maxs = ent:GetCollisionBounds()
+	--content.Mins, content.Maxs = ent:GetCollisionBounds()
 	content.ColGroup = ent:GetCollisionGroup()
 	content.Name = ent:GetName()
 	content.ModelScale = ent:GetModelScale()
@@ -213,7 +188,7 @@ local function PPEntityFromTable( data, id )
 	ent:SetAngles( data.Angle or Angle(0, 0, 0) )
 	ent:SetModel( data.Model or "models/error.mdl" )
 	ent:SetSkin( data.Skin or 0 )
-	ent:SetCollisionBounds( ( data.Mins or 0 ), ( data.Maxs or 0 ) )
+	--ent:SetCollisionBounds( ( data.Mins or 0 ), ( data.Maxs or 0 ) )
 	ent:SetCollisionGroup( data.ColGroup or 0 )
 	ent:SetName( data.Name or "" )
 	ent:SetModelScale( data.ModelScale or 1 )
@@ -384,8 +359,6 @@ function TOOL:LeftClick(trace)
 
 	if CLIENT then return end
 
-	if not trace.Entity:IsValid() or not self:GetOwner():IsAdmin() then return end
-
 	local ent = trace.Entity
 	local ply = self:GetOwner()
 
@@ -424,8 +397,6 @@ end
 function TOOL:RightClick(trace)
 
 	if CLIENT then return end
-
-	if (not trace.Entity:IsValid()) then return end
 
 	local ent = trace.Entity
 	local ply = self:GetOwner()
